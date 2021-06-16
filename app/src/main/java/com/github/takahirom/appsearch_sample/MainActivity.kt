@@ -2,6 +2,7 @@ package com.github.takahirom.appsearch_sample
 
 import android.content.Context
 import android.os.Bundle
+import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appsearch.annotation.Document
 import androidx.appsearch.app.AppSearchSchema
@@ -21,6 +22,7 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         val context: Context = getApplicationContext()
+        val textView = findViewById<TextView>(R.id.text)
 
         lifecycleScope.launch {
             val sessionFuture = LocalStorage.createSearchSession(
@@ -41,7 +43,7 @@ class MainActivity : AppCompatActivity() {
             val putRequest = PutDocumentsRequest.Builder().addDocuments(note).build()
             val result = session.put(putRequest).await()
 
-            println("putRequest:$result")
+            textView += "putRequest:$result"
 
             val document = session.getByDocumentId(
                 GetByDocumentIdRequest
@@ -49,7 +51,7 @@ class MainActivity : AppCompatActivity() {
                     .addIds("noteId")
                     .build()
             ).await()
-            println(document)
+            textView += document.toString()
 
             val searchSpec = SearchSpec.Builder()
                 .addFilterNamespaces("user1")
@@ -68,11 +70,17 @@ class MainActivity : AppCompatActivity() {
                 e.printStackTrace()
                 null
             }
-            println(searchedNote)
+            textView += searchedNote.toString()
+
+            session.close()
         }
 
 
     }
+}
+
+private operator fun TextView.plusAssign(s: String) {
+    text = text.toString() +"\n"+ s
 }
 
 @Document
