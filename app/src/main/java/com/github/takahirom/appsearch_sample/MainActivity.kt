@@ -6,12 +6,10 @@ import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appsearch.annotation.Document
 import androidx.appsearch.app.AppSearchSchema
-import androidx.appsearch.app.GenericDocument
 import androidx.appsearch.app.GetByDocumentIdRequest
 import androidx.appsearch.app.PutDocumentsRequest
 import androidx.appsearch.app.SearchSpec
 import androidx.appsearch.app.SetSchemaRequest
-import androidx.appsearch.exceptions.AppSearchException
 import androidx.appsearch.localstorage.LocalStorage
 import androidx.lifecycle.lifecycleScope
 import kotlinx.coroutines.guava.await
@@ -37,7 +35,7 @@ class MainActivity : AppCompatActivity() {
                 namespace = "user1",
                 id = "noteId",
                 score = 10,
-                text = "Buy fresh fruit"
+                text = "Buy fresh テスト 漢字 ひらがな fruit"
             )
 
             val putRequest = PutDocumentsRequest.Builder().addDocuments(note).build()
@@ -56,21 +54,14 @@ class MainActivity : AppCompatActivity() {
             val searchSpec = SearchSpec.Builder()
                 .addFilterNamespaces("user1")
                 .build()
+            val list = listOf("fresh", "fruit", "テスト", "漢字", "ひらがな")
+            list.forEach {
+                val searchResult = session.search(it, searchSpec).nextPage.await()
 
-            val searchResult = session.search("fruit", searchSpec).nextPage.await()
+                val resultSize = searchResult.size
 
-            val genericDocument: GenericDocument = searchResult[0].genericDocument
-            val schemaType = genericDocument.schemaType
-            val searchedNote: Note? = try {
-                if (schemaType == "Note") {
-                    // Converts GenericDocument object to Note object.
-                    genericDocument.toDocumentClass(Note::class.java)
-                } else null
-            } catch (e: AppSearchException) {
-                e.printStackTrace()
-                null
+                textView += "$it:$resultSize"
             }
-            textView += searchedNote.toString()
 
             session.close()
         }
@@ -80,7 +71,7 @@ class MainActivity : AppCompatActivity() {
 }
 
 private operator fun TextView.plusAssign(s: String) {
-    text = text.toString() +"\n"+ s
+    text = text.toString() + "\n" + s
 }
 
 @Document
