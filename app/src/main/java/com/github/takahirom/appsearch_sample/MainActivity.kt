@@ -54,6 +54,7 @@ class MainActivity : AppCompatActivity() {
             val searchSpec = SearchSpec.Builder()
                 .addFilterNamespaces("user1")
                 .build()
+
             val list = listOf("fresh", "fruit", "テスト", "漢字", "ひらがな")
             list.forEach {
                 val searchResult = session.search(it, searchSpec).nextPage.await()

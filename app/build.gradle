@@ -46,7 +46,7 @@ dependencies {
     androidTestImplementation 'androidx.test.ext:junit:1.1.2'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.3.0'
 
-    def appsearch_version = "1.0.0-alpha01"
+    def appsearch_version = "1.0.0-alpha02"
 
     implementation("androidx.appsearch:appsearch:$appsearch_version")
     kapt("androidx.appsearch:appsearch-compiler:$appsearch_version")
